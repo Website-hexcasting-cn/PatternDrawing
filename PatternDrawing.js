@@ -245,8 +245,18 @@ function CreatePatternCanvas(
     }
 
     function IsMouseOverPoint(e) {
-        const ClickX = e.clientX - CanvasElement.offsetLeft;
-        const ClickY = e.clientY - CanvasElement.offsetTop;
+        let ClientX, ClientY;
+        
+        if (e.touches && e.touches.length > 0) {
+            ClientX = e.touches[0].clientX;
+            ClientY = e.touches[0].clientY;
+        } else {
+            ClientX = e.clientX;
+            ClientY = e.clientY;
+        }
+        
+        const ClickX = ClientX - CanvasElement.offsetLeft;
+        const ClickY = ClientY - CanvasElement.offsetTop;
         const VirtualPoint = RealToVirtual(ClickX, ClickY);
         const RealPoint = VirtualToReal(VirtualPoint);
         const Threshold = CachedSpacing * 0.3;

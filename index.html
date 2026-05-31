@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Drawing Example</title>
+    <link rel="stylesheet" href="index.css">
+    
+</head>
+<body>
+    <div style="width: 100vw; height: 100vh;">
+        <canvas id="PatternCanvas"></canvas>
+    </div>
+    <script type="module">
+        import { CreatePatternCanvas } from './PatternDrawing.js';
+        window.PatternCanvasInstance=CreatePatternCanvas(document.getElementById("PatternCanvas"), {});
+    </script>
+</body>
+</html>

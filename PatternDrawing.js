@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * 创建一个模式绘制画布
  * @param {HTMLCanvasElement} CanvasElement - 画布元素，默认为 document.getElementById("PatternCanvas")

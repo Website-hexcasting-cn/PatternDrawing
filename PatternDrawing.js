@@ -36,7 +36,8 @@ function CreatePatternCanvas(
             AllowOverlap: false,
             EnableZappy: false,
             ZappyVariance: 2.5,
-            DragToDraw: true
+            DragToDraw: true,
+            PreventConnectToExisting: true
         }
     };
 
@@ -291,6 +292,22 @@ function CreatePatternCanvas(
         };
     }
 
+    function IsPointInExistingPatterns(Point) {
+        const Patterns = VirtualCanvas.Patterns;
+
+        for (let i = 0, len = Patterns.length; i < len; i++) {
+            const StrokeOrder = Patterns[i].StrokeOrder;
+            for (let j = 0, jLen = StrokeOrder.length; j < jLen; j++) {
+                const P = StrokeOrder[j];
+                if (Point.x === P.x && Point.y === P.y) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     function IsStrokeOverlap(FromPoint, ToPoint) {
         const Patterns = VirtualCanvas.Patterns;
         const Path = State.Path;
@@ -514,7 +531,7 @@ function CreatePatternCanvas(
         if (!PatternData.Mode.DragToDraw) return;
 
         const Point = IsMouseOverPoint(e);
-        if (Point) {
+        if (Point && (!PatternData.Mode.PreventConnectToExisting || !IsPointInExistingPatterns(Point))) {
             State.DrawingStatus = true;
             State.Path = [Point];
             State.HighlightPoint = Point;
@@ -551,7 +568,7 @@ function CreatePatternCanvas(
         State.MousePosition = { x: TouchX, y: TouchY };
 
         const VirtualPoint = RealToVirtual(TouchX, TouchY);
-        if (VirtualPoint) {
+        if (VirtualPoint && (!PatternData.Mode.PreventConnectToExisting || !IsPointInExistingPatterns(VirtualPoint))) {
             State.DrawingStatus = true;
             State.Path = [VirtualPoint];
             State.HighlightPoint = VirtualPoint;
@@ -654,6 +671,10 @@ function CreatePatternCanvas(
                     Path.pop();
                     continue;
                 }
+            }
+
+            if (PatternData.Mode.PreventConnectToExisting && IsPointInExistingPatterns(MidPoint)) {
+                continue;
             }
 
             if (!PatternData.Mode.AllowOverlap) {

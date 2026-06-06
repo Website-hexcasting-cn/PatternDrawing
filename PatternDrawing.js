@@ -632,7 +632,7 @@ function CreatePatternCanvas(
     function FinishPattern() {
         State.DrawingStatus = false;
         const StrokeOrder = State.Path;
-        if (StrokeOrder.length > 0) {
+        if (StrokeOrder.length > 1) {
             VirtualCanvas.Patterns.push({
                 StrokeOrder: StrokeOrder,
                 StartingPointX: StrokeOrder[0].x,

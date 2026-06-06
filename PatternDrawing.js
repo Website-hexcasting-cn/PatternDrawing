@@ -37,7 +37,8 @@ function CreatePatternCanvas(
             EnableZappy: false,
             ZappyVariance: 2.5,
             DragToDraw: true,
-            PreventConnectToExisting: true
+            PreventConnectToExisting: true,
+            DebugMode: false
         }
     };
 
@@ -208,6 +209,21 @@ function CreatePatternCanvas(
         if (AbsDeltaY === 1) {
             if ((Last.y & 1) === 0 && DeltaX === -1) return true;
             if ((Last.y & 1) === 1 && DeltaX === 1) return true;
+        }
+        return false;
+    }
+
+    function IsPointAdjacent(FromPoint, ToPoint) {
+        const DeltaX = ToPoint.x - FromPoint.x;
+        const DeltaY = ToPoint.y - FromPoint.y;
+
+        if (DeltaX === 0 && DeltaY === 0) return true;
+        if (Math.abs(DeltaX) === 1 && DeltaY === 0) return true;
+        if (DeltaX === 0 && Math.abs(DeltaY) === 1) return true;
+
+        if (Math.abs(DeltaY) === 1) {
+            if ((FromPoint.y & 1) === 0 && DeltaX === -1) return true;
+            if ((FromPoint.y & 1) === 1 && DeltaX === 1) return true;
         }
         return false;
     }
@@ -386,6 +402,12 @@ function CreatePatternCanvas(
                 }
 
                 RenderSinglePoint(Ctx, PointX, PointY, Opacity);
+
+                if (PatternData.Mode.DebugMode) {
+                    Ctx.font = "10px monospace";
+                    Ctx.fillStyle = `rgba(255, 255, 255, ${Opacity * 0.8})`;
+                    Ctx.fillText(`(${i},${j})`, PointX + 8, PointY - 8);
+                }
             }
         }
     }
@@ -664,6 +686,11 @@ function CreatePatternCanvas(
 
         for (let i = 0; i < HexPath.length; i++) {
             const MidPoint = HexPath[i];
+            const LastInPath = Path[Path.length - 1];
+
+            if (!IsPointAdjacent(LastInPath, MidPoint)) {
+                continue;
+            }
 
             if (Path.length >= 2) {
                 const PrevPoint = Path[Path.length - 2];
@@ -678,7 +705,6 @@ function CreatePatternCanvas(
             }
 
             if (!PatternData.Mode.AllowOverlap) {
-                const LastInPath = Path[Path.length - 1];
                 if (LastInPath && IsStrokeOverlap(LastInPath, MidPoint)) {
                     continue;
                 }

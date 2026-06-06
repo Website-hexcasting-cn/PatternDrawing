@@ -218,12 +218,16 @@ function CreatePatternCanvas(
         const DeltaY = ToPoint.y - FromPoint.y;
 
         if (DeltaX === 0 && DeltaY === 0) return true;
-        if (Math.abs(DeltaX) === 1 && DeltaY === 0) return true;
+
+        if (DeltaY === 0 && Math.abs(DeltaX) === 1) return true;
+
         if (DeltaX === 0 && Math.abs(DeltaY) === 1) return true;
 
-        if (Math.abs(DeltaY) === 1) {
-            if ((FromPoint.y & 1) === 0 && DeltaX === -1) return true;
-            if ((FromPoint.y & 1) === 1 && DeltaX === 1) return true;
+        if (Math.abs(DeltaY) === 1 && Math.abs(DeltaX) === 1) {
+            if ((FromPoint.y & 1) === 0 && DeltaY === -1 && DeltaX === -1) return true;
+            if ((FromPoint.y & 1) === 0 && DeltaY === 1 && DeltaX === -1) return true;
+            if ((FromPoint.y & 1) === 1 && DeltaY === -1 && DeltaX === 1) return true;
+            if ((FromPoint.y & 1) === 1 && DeltaY === 1 && DeltaX === 1) return true;
         }
         return false;
     }
